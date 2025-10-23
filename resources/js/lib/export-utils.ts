@@ -24,7 +24,10 @@ const COLORS = {
 /**
  * Export data to PDF with professional styling
  */
-export function exportToPDF(data: ExportData) {
+export function exportToPDF(
+    data: ExportData,
+    themeColor: number[] = COLORS.primary,
+) {
     const doc = new jsPDF();
     type JsPDFExt = jsPDF & {
         autoTable?: (opts: AutoTableOptions) => void;
@@ -37,7 +40,7 @@ export function exportToPDF(data: ExportData) {
     const margin = 15;
 
     // Header con gradiente profesional
-    pdf.setFillColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+    pdf.setFillColor(themeColor[0], themeColor[1], themeColor[2]);
     pdf.rect(0, 0, pageWidth, 25, 'F');
 
     // Logo/Icono (opcional)
@@ -143,11 +146,7 @@ export function exportToPDF(data: ExportData) {
             lineWidth: 0.1,
         },
         headStyles: {
-            fillColor: [
-                COLORS.primary[0],
-                COLORS.primary[1],
-                COLORS.primary[2],
-            ],
+            fillColor: themeColor,
             textColor: COLORS.textLight,
             fontStyle: 'bold',
             halign: 'center',

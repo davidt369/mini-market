@@ -62,9 +62,21 @@ const DashboardCard = ({
     className,
 }: DashboardCardProps) => {
     const trendConfig = {
-        up: { icon: TrendingUp, color: 'text-emerald-600' },
-        down: { icon: TrendingDown, color: 'text-red-600' },
-        neutral: { icon: Minus, color: 'text-slate-600' },
+        up: {
+            icon: TrendingUp,
+            color: 'text-green-600 dark:text-green-400',
+            bgColor: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+        },
+        down: {
+            icon: TrendingDown,
+            color: 'text-red-600 dark:text-red-400',
+            bgColor: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+        },
+        neutral: {
+            icon: Minus,
+            color: 'text-muted-foreground',
+            bgColor: 'bg-muted text-muted-foreground'
+        },
     };
 
     const TrendIcon = trendConfig[trend].icon;
@@ -72,20 +84,24 @@ const DashboardCard = ({
     return (
         <Card
             className={cn(
-                'relative overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1',
+                'relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 border-border',
                 className
             )}
         >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-700">{title}</CardTitle>
-                <div className="p-2 rounded-lg bg-white/60 backdrop-blur-sm border border-white/30">
+                <CardTitle className="text-sm font-medium text-card-foreground/80">
+                    {title}
+                </CardTitle>
+                <div className="p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border">
                     {icon}
                 </div>
             </CardHeader>
 
             <CardContent>
                 {/* Valor principal */}
-                <div className="text-3xl font-bold text-slate-800">{value}</div>
+                <div className="text-3xl font-bold text-card-foreground">
+                    {value}
+                </div>
 
                 {/* Tendencia + descripción */}
                 <div className="flex items-center gap-2 mt-1">
@@ -93,10 +109,8 @@ const DashboardCard = ({
                         <Badge
                             variant="secondary"
                             className={cn(
-                                'px-2 py-0 text-xs font-semibold',
-                                trend === 'up' && 'bg-emerald-100 text-emerald-700',
-                                trend === 'down' && 'bg-red-100 text-red-700',
-                                trend === 'neutral' && 'bg-slate-100 text-slate-700'
+                                'px-2 py-0 text-xs font-semibold border-0',
+                                trendConfig[trend].bgColor
                             )}
                         >
                             <TrendIcon className="mr-1 h-3 w-3" />
@@ -104,7 +118,7 @@ const DashboardCard = ({
                         </Badge>
                     )}
                     {description && (
-                        <p className="text-xs text-slate-500">{description}</p>
+                        <p className="text-xs text-muted-foreground">{description}</p>
                     )}
                 </div>
 
@@ -115,9 +129,9 @@ const DashboardCard = ({
                             key={i}
                             className={cn(
                                 'flex-1 rounded-sm',
-                                trend === 'up' && 'bg-emerald-400',
-                                trend === 'down' && 'bg-red-400',
-                                trend === 'neutral' && 'bg-slate-300',
+                                trend === 'up' && 'bg-green-400 dark:bg-green-500',
+                                trend === 'down' && 'bg-red-400 dark:bg-red-500',
+                                trend === 'neutral' && 'bg-muted-foreground/30',
                                 i % 3 === 0 && 'h-3',
                                 i % 3 === 1 && 'h-5',
                                 i % 3 === 2 && 'h-7'
@@ -138,7 +152,7 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Total de Clientes"
                 value={stats.totalCustomers ?? 0}
-                icon={<User className="h-6 w-6 text-emerald-500" />}
+                icon={<User className="h-6 w-6 text-green-600" />}
                 trend="up"
                 trendValue="+12.5%"
                 description="Clientes registrados en el sistema"
@@ -146,7 +160,7 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Total de Proveedores"
                 value={stats.totalSuppliers ?? 0}
-                icon={<Users className="h-6 w-6 text-orange-500" />}
+                icon={<Users className="h-6 w-6 text-orange-600" />}
                 trend="down"
                 trendValue="-5.2%"
                 description="Proveedores activos en el sistema"
@@ -154,7 +168,7 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Productos en Catálogo"
                 value={stats.totalProducts ?? 0}
-                icon={<Package className="h-6 w-6 text-violet-500" />}
+                icon={<Package className="h-6 w-6 text-violet-600" />}
                 trend="up"
                 trendValue="+8.7%"
                 description="Tipos de productos diferentes"
@@ -162,7 +176,7 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Facturas Registradas"
                 value={stats.totalInvoices ?? 0}
-                icon={<FileText className="h-6 w-6 text-slate-500" />}
+                icon={<FileText className="h-6 w-6 text-slate-600" />}
                 trend="up"
                 trendValue="+15.3%"
                 description="Total de compras registradas"
@@ -172,7 +186,7 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Stock Total"
                 value={stats.totalStock ?? 0}
-                icon={<ShoppingBag className="h-6 w-6 text-blue-500" />}
+                icon={<ShoppingBag className="h-6 w-6 text-blue-600" />}
                 trend="up"
                 trendValue="+4.5%"
                 description="Unidades totales en inventario"
@@ -180,7 +194,7 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Unidades Vendidas"
                 value={stats.soldStock ?? 0}
-                icon={<Truck className="h-6 w-6 text-pink-500" />}
+                icon={<Truck className="h-6 w-6 text-pink-600" />}
                 trend="up"
                 trendValue="+18.2%"
                 description="Ventas totales en unidades"
@@ -188,15 +202,15 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             <DashboardCard
                 title="Stock Disponible"
                 value={stats.currentStock ?? 0}
-                icon={<BarChart className="h-6 w-6 text-sky-500" />}
+                icon={<BarChart className="h-6 w-6 text-sky-600" />}
                 trend="neutral"
                 trendValue="+1.2%"
                 description="Unidades actuales en almacén"
             />
             <DashboardCard
                 title="Ingresos Totales"
-                value={`$${Number(stats.totalSales ?? 0).toFixed(2)}`}
-                icon={<CreditCard className="h-6 w-6 text-amber-500" />}
+                value={`Bs. ${Number(stats.totalSales ?? 0).toFixed(2)}`}
+                icon={<CreditCard className="h-6 w-6 text-amber-600" />}
                 trend="up"
                 trendValue="+22.1%"
                 description="Total facturado en ventas"
@@ -205,32 +219,32 @@ export default function DashboardCards({ stats }: { stats: Stats }) {
             {/* Fila 3 - Finanzas y Rentabilidad */}
             <DashboardCard
                 title="Ventas del Mes"
-                value={`$${Number(stats.salesThisMonth ?? 0).toFixed(2)}`}
-                icon={<DollarSign className="h-6 w-6 text-green-500" />}
+                value={`Bs. ${Number(stats.salesThisMonth ?? 0).toFixed(2)}`}
+                icon={<DollarSign className="h-6 w-6 text-emerald-600" />}
                 trend="up"
                 trendValue="+12.7%"
                 description="Ingresos del mes actual"
             />
             <DashboardCard
                 title="Ticket Promedio"
-                value={`$${Number(stats.avgSale ?? 0).toFixed(2)}`}
-                icon={<AlertTriangle className="h-6 w-6 text-red-500" />}
+                value={`Bs. ${Number(stats.avgSale ?? 0).toFixed(2)}`}
+                icon={<AlertTriangle className="h-6 w-6 text-red-600" />}
                 trend="down"
                 trendValue="-3.4%"
                 description="Valor promedio por venta"
             />
             <DashboardCard
                 title="Beneficio Bruto"
-                value={`$${Number(stats.grossProfit ?? 0).toFixed(2)}`}
-                icon={<Monitor className="h-6 w-6 text-yellow-500" />}
+                value={`Bs. ${Number(stats.grossProfit ?? 0).toFixed(2)}`}
+                icon={<Monitor className="h-6 w-6 text-yellow-600" />}
                 trend="up"
                 trendValue="+8.9%"
                 description="Utilidad antes de gastos"
             />
             <DashboardCard
                 title="Beneficio Neto"
-                value={`$${Number(stats.netProfit ?? 0).toFixed(2)}`}
-                icon={<Calculator className="h-6 w-6 text-cyan-500" />}
+                value={`Bs. ${Number(stats.netProfit ?? 0).toFixed(2)}`}
+                icon={<Calculator className="h-6 w-6 text-cyan-600" />}
                 trend="up"
                 trendValue="+6.3%"
                 description="Utilidad después de gastos"

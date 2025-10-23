@@ -33,6 +33,7 @@ import {
 
 import { EditDialog } from "./EditDialogProduct"
 import { DeleteDialog } from "./DeleteDialog"
+import { Badge } from "../ui/badge"
 
 export interface Category {
     id: number
@@ -63,6 +64,14 @@ export function DataTableProducts({ data, categories }: DataTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    const [showLowStockOnly, setShowLowStockOnly] = React.useState(false)
+
+    const filteredData = React.useMemo(() => {
+        if (showLowStockOnly) {
+            return data.filter(p => p.stock <= p.min_stock)
+        }
+        return data
+    }, [data, showLowStockOnly])
 
     const columns = React.useMemo<ColumnDef<Product>[]>(() => [
         {
@@ -111,6 +120,15 @@ export function DataTableProducts({ data, categories }: DataTableProps) {
         {
             accessorKey: "stock",
             header: "Stock",
+            cell: ({ row }) => {
+                const product = row.original
+                const isLowStock = product.stock <= product.min_stock
+                return isLowStock ? (
+                    <Badge variant="destructive">{product.stock}</Badge>
+                ) : (
+                    <span>{product.stock}</span>
+                )
+            }
         },
         {
             accessorKey: "min_stock",
@@ -157,7 +175,7 @@ export function DataTableProducts({ data, categories }: DataTableProps) {
     ], [categories])
 
     const table = useReactTable({
-        data,
+        data: filteredData,
         columns,
         state: { sorting, columnFilters, columnVisibility },
         onSortingChange: setSorting,
@@ -173,12 +191,20 @@ export function DataTableProducts({ data, categories }: DataTableProps) {
         <div className="w-full">
             {/* Buscador y control de columnas */}
             <div className="flex items-center justify-between py-4">
-                <Input
-                    placeholder="Buscar productos..."
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
-                    className="max-w-sm"
-                />
+                <div className="flex items-center gap-2">
+                    <Input
+                        placeholder="Buscar productos..."
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                        onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+                        className="max-w-sm"
+                    />
+                    <Button
+                        variant={showLowStockOnly ? "destructive" : "outline"}
+                        onClick={() => setShowLowStockOnly(!showLowStockOnly)}
+                    >
+                        Mostrar Stock Bajo
+                    </Button>
+                </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline">
