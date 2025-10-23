@@ -27,6 +27,28 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            PermissionSeeder::class,
         ]);
+
+        // Crear usuarios con roles
+        $adminUser = User::firstOrCreate(
+            ['email' => 'jose@example.com'],
+            [
+                'name' => 'jose antonio',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $adminUser->assignRole('admin');
+
+        $employeeUser = User::firstOrCreate(
+            ['email' => 'alberto@example.com'],
+            [
+                'name' => 'alberto gonzalez',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $employeeUser->assignRole('employee');
     }
 }

@@ -1,3 +1,4 @@
+// @/components/app-sidebar.tsx
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -11,76 +12,89 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { LayoutGrid, Package2 } from 'lucide-react';
+import { Role, User, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { LayoutGrid, PackagePlus } from 'lucide-react';
 import AppLogo from './app-logo';
 
 import {
-
     Users,
     Package,
     ShoppingCart,
-    UserCog,
-
-    BarChart3
+    BarChart3,
 } from 'lucide-react';
-import market from '@/routes/market';
+import categories from '@/routes/market/categories';
+import products from '@/routes/market/products';
+import users from '@/routes/market/users';
+import customers from '@/routes/market/customers';
+import sales from '@/routes/market/sales';
+import purchases from '@/routes/market/purchases';
+import reports from '@/routes/market/reports';
 
-
+// Definición de los ítems del menú con control de roles
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Panel de control',
         href: dashboard(),
         icon: LayoutGrid,
+        allowedRoles: ['admin', 'employee'],
     },
     {
-        title: 'Gestión de Categorías',
-        href: market.categories.index.url(),
-        icon: Package2, // Icono de caja para productos
+        title: 'Categorías',
+        href: categories.index(),
+        icon: Package,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Gestión de Productos',
-        href: market.products.index.url(),
-        icon: Package, // Icono de caja para productos
+        href: products.index(),
+        icon: Package,
+        allowedRoles: ['admin', 'employee'],
     },
     {
-        title: 'Gestión de Clientes',
-        href: '#',
-        icon: Users, // Icono de grupo de usuarios para clientes
-    },
-
-    {
-        title: 'Gestión de Ventas',
-        href: '#',
-        icon: ShoppingCart, // Icono de carrito de compras para ventas
+        title: 'Clientes',
+        href: customers.index(),
+        icon: Users,
+        allowedRoles: ['admin', 'employee'],
     },
     {
-        title: 'Gestión de Usuarios',
-        href: '#',
-        icon: UserCog, // Icono de usuario con engranaje para gestión
+        title: 'Ventas',
+        href: sales.index(),
+        icon: ShoppingCart,
+        allowedRoles: ['employee', 'admin'],
+    },
+    {
+        title: 'Compras',
+        href: purchases.index(),
+        icon: PackagePlus,
+        allowedRoles: ['admin', 'employee'],
     },
     {
         title: 'Reportes',
-        href: '#',
-        icon: BarChart3, // Icono de gráfico para reportes
-    }
+        href: reports.index(),
+        icon: BarChart3,
+        allowedRoles: ['admin'],
+    },
+    {
+        title: 'Usuarios del Sistema',
+        href: users.index(),
+        icon: Users,
+        allowedRoles: ['admin'],
+    },
 ];
 
-const footerNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/react-starter-kit',
-    //     icon: Folder,
-    // },
-    // {
-    //     title: 'Documentation',
-    //     href: 'https://laravel.com/docs/starter-kits#react',
-    //     icon: BookOpen,
-    // },
-];
+const footerNavItems: NavItem[] = [];
+// Puedes agregar ítems aquí si lo deseas
 
 export function AppSidebar() {
+    const { auth } = usePage<{ auth: User }>().props;
+
+    // Filtrar ítems según los roles del usuario
+    const visibleNavItems = mainNavItems.filter((item) => {
+        if (!item.allowedRoles) return true; // Si no hay restricción, mostrar a todos
+        return item.allowedRoles.some((role) => auth.roles.includes(role as unknown as Role));
+    });
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -96,7 +110,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={visibleNavItems} />
             </SidebarContent>
 
             <SidebarFooter>

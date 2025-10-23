@@ -23,6 +23,7 @@ import {
 
 /* ---------- TIPOS ---------- */
 type Trend = 'up' | 'down' | 'neutral';
+
 interface DashboardCardProps {
     title: string;
     value: string | number;
@@ -31,6 +32,23 @@ interface DashboardCardProps {
     trendValue?: string;
     description?: string;
     className?: string;
+}
+
+interface Stats {
+    totalCustomers?: number;
+    totalSuppliers?: number;
+    totalProducts?: number;
+    totalInvoices?: number;
+    totalStock?: number;
+    soldStock?: number;
+    currentStock?: number;
+    totalSales?: number;
+    totalPaid?: number;
+    remainingAmount?: number;
+    salesThisMonth?: number;
+    avgSale?: number;
+    grossProfit?: number;
+    netProfit?: number;
 }
 
 /* ---------- CARD REUTILIZABLE ---------- */
@@ -113,124 +131,109 @@ const DashboardCard = ({
 };
 
 /* ---------- DASHBOARD ---------- */
-export default function DashboardCards() {
-    const stats = {
-        totalCustomers: 3,
-        totalSuppliers: 2,
-        totalProducts: 10,
-        totalInvoices: 4,
-        totalStock: 298,
-        soldStock: 124,
-        currentStock: 174,
-        totalSales: 41.5,
-        totalPaid: 205.0,
-        remainingAmount: 20.0,
-        grossProfit: 65.5,
-        netProfit: 45.5,
-    };
-
+export default function DashboardCards({ stats }: { stats: Stats }) {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Fila 1 */}
+            {/* Fila 1 - Información General */}
             <DashboardCard
-                title="Clientes"
-                value={stats.totalCustomers}
+                title="Total de Clientes"
+                value={stats.totalCustomers ?? 0}
                 icon={<User className="h-6 w-6 text-emerald-500" />}
                 trend="up"
                 trendValue="+12.5%"
-                description="Número total de clientes"
+                description="Clientes registrados en el sistema"
             />
             <DashboardCard
-                title="Proveedores"
-                value={stats.totalSuppliers}
+                title="Total de Proveedores"
+                value={stats.totalSuppliers ?? 0}
                 icon={<Users className="h-6 w-6 text-orange-500" />}
                 trend="down"
-                trendValue="-20%"
-                description="Número total de proveedores"
+                trendValue="-5.2%"
+                description="Proveedores activos en el sistema"
             />
             <DashboardCard
-                title="Productos"
-                value={stats.totalProducts}
+                title="Productos en Catálogo"
+                value={stats.totalProducts ?? 0}
                 icon={<Package className="h-6 w-6 text-violet-500" />}
                 trend="up"
-                trendValue="+12.5%"
-                description="Número total de productos"
+                trendValue="+8.7%"
+                description="Tipos de productos diferentes"
             />
             <DashboardCard
-                title="Facturas"
-                value={stats.totalInvoices}
+                title="Facturas Registradas"
+                value={stats.totalInvoices ?? 0}
                 icon={<FileText className="h-6 w-6 text-slate-500" />}
-                trend="neutral"
-                trendValue="0%"
-                description="Número total de facturas"
+                trend="up"
+                trendValue="+15.3%"
+                description="Total de compras registradas"
             />
 
-            {/* Fila 2 */}
+            {/* Fila 2 - Inventario y Stock */}
             <DashboardCard
-                title="Existencia total"
-                value={stats.totalStock}
+                title="Stock Total"
+                value={stats.totalStock ?? 0}
                 icon={<ShoppingBag className="h-6 w-6 text-blue-500" />}
                 trend="up"
                 trendValue="+4.5%"
-                description="Unidades en inventario"
+                description="Unidades totales en inventario"
             />
             <DashboardCard
-                title="Existencia vendida"
-                value={stats.soldStock}
+                title="Unidades Vendidas"
+                value={stats.soldStock ?? 0}
                 icon={<Truck className="h-6 w-6 text-pink-500" />}
                 trend="up"
-                trendValue="+8.2%"
-                description="Unidades vendidas este mes"
+                trendValue="+18.2%"
+                description="Ventas totales en unidades"
             />
             <DashboardCard
-                title="Existencia actual"
-                value={stats.currentStock}
+                title="Stock Disponible"
+                value={stats.currentStock ?? 0}
                 icon={<BarChart className="h-6 w-6 text-sky-500" />}
                 trend="neutral"
-                trendValue="0%"
-                description="Unidades disponibles"
+                trendValue="+1.2%"
+                description="Unidades actuales en almacén"
             />
             <DashboardCard
-                title="Importe vendido"
-                value={`$ ${stats.totalSales.toFixed(2)}`}
+                title="Ingresos Totales"
+                value={`$${Number(stats.totalSales ?? 0).toFixed(2)}`}
                 icon={<CreditCard className="h-6 w-6 text-amber-500" />}
                 trend="up"
-                trendValue="+3.1%"
-                description="Ventas del período"
+                trendValue="+22.1%"
+                description="Total facturado en ventas"
             />
 
-            {/* Fila 3 */}
+            {/* Fila 3 - Finanzas y Rentabilidad */}
             <DashboardCard
-                title="Importe pagado"
-                value={`$ ${stats.totalPaid.toFixed(2)}`}
+                title="Ventas del Mes"
+                value={`$${Number(stats.salesThisMonth ?? 0).toFixed(2)}`}
                 icon={<DollarSign className="h-6 w-6 text-green-500" />}
                 trend="up"
-                trendValue="+5.7%"
-                description="Cobros realizados"
+                trendValue="+12.7%"
+                description="Ingresos del mes actual"
             />
             <DashboardCard
-                title="Importe restante"
-                value={`$ ${stats.remainingAmount.toFixed(2)}`}
+                title="Ticket Promedio"
+                value={`$${Number(stats.avgSale ?? 0).toFixed(2)}`}
                 icon={<AlertTriangle className="h-6 w-6 text-red-500" />}
                 trend="down"
-                trendValue="-12.3%"
-                description="Por cobrar"
+                trendValue="-3.4%"
+                description="Valor promedio por venta"
             />
             <DashboardCard
-                title="Beneficio bruto"
-                value={`$ ${stats.grossProfit.toFixed(2)}`}
+                title="Beneficio Bruto"
+                value={`$${Number(stats.grossProfit ?? 0).toFixed(2)}`}
                 icon={<Monitor className="h-6 w-6 text-yellow-500" />}
                 trend="up"
-                trendValue="+2.4%"
-                description="Antes de gastos"
+                trendValue="+8.9%"
+                description="Utilidad antes de gastos"
             />
             <DashboardCard
-                title="Beneficio neto"
-                value={`$ ${stats.netProfit.toFixed(2)}`}
+                title="Beneficio Neto"
+                value={`$${Number(stats.netProfit ?? 0).toFixed(2)}`}
                 icon={<Calculator className="h-6 w-6 text-cyan-500" />}
                 trend="up"
-                trendValue="+1.8%"
-                description="Después de gastos"
+                trendValue="+6.3%"
+                description="Utilidad después de gastos"
             />
         </div>
     );
