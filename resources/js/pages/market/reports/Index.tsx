@@ -369,7 +369,7 @@ export default function ReportsPage() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Reportes - Farmacia" />
+            <Head title="Reportes - Market" />
             <div className="container mx-auto py-8 space-y-8">
                 {/* Header */}
                 <div className="flex justify-between items-center">

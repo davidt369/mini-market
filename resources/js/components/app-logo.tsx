@@ -4,7 +4,7 @@ export default function AppLogo() {
             <div className="flex items-center justify-center rounded-md text-sidebar-primary-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
                 <img
                     src="/favicon.ico"
-                    alt="Mi Salud Farmacia"
+                    alt="Mi Salud Market"
                     className="h-8 w-8 max-w-[32px] filter-invert transition-transform hover:scale-105"
                 />
             </div>

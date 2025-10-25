@@ -1,9 +1,9 @@
 -- CREAR BASE DE DATOS (usa una por sistema o la misma con prefijos)
-CREATE DATABASE IF NOT EXISTS mi_salud_farmacia CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS mi_salud_Market CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS mini_market CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- EJEMPLO: usar la de farmacia
-USE mi_salud_farmacia;
+-- EJEMPLO: usar la de Market
+USE mi_salud_Market;
 
 -- 1. CATEGORÍAS (productos organizados)
 CREATE TABLE categories (
@@ -24,7 +24,7 @@ CREATE TABLE products (
     unit_price DECIMAL(12,2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     min_stock INT NOT NULL DEFAULT 5,          -- para alerta stock bajo
-    expiry_date DATE NULL,                     -- solo para farmacia (puede ser NULL)
+    expiry_date DATE NULL,                     -- solo para Market (puede ser NULL)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
