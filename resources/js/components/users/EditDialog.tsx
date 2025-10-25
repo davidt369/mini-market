@@ -22,19 +22,33 @@ export function EditDialog({ user, roles }: { user: UserType; roles?: string[] }
 
     type FormFields = { name: string; email: string; password?: string; role?: string }
 
+    // Determinar rol inicial del usuario (manejar tanto strings como objetos role)
+    const initialRole = (() => {
+        const r = (user.roles || [])[0] as unknown
+        if (!r) return ""
+        if (typeof r === 'string') return r
+        return (r as { name?: string })?.name ?? ''
+    })()
+
     const { data, setData, put, processing, errors, reset } = useForm<FormFields>({
         name: user.name || "",
         email: user.email || "",
         password: "",
-        role: ((user as UserType & { roles?: string[] }).roles || [])[0] || "",
+        role: initialRole,
     })
+
+    // Sólo permitir asignar el rol 'employee'
+    const allowedRoles = (roles ?? []).filter((r) => r === 'employee')
+
+    // Detectar si el usuario es admin (entonces no permitimos cambiarlo)
+    const userIsAdmin = (user.roles || []).some((r: unknown) => (typeof r === 'string' ? r === 'admin' : (r as { name?: string })?.name === 'admin'))
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
         console.log('EditDialog: Iniciando submit...')
 
-        put(route("market.users.update", user.id), {
+        put(route("pharmacy.users.update", user.id), {
             preserveScroll: true,
             onSuccess: () => {
                 console.log('EditDialog: onSuccess callback ejecutado')
@@ -122,24 +136,32 @@ export function EditDialog({ user, roles }: { user: UserType; roles?: string[] }
                         {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                     </div>
 
-                    {roles && (
+                    {/* Si el usuario es admin no permitir cambiar el rol */}
+                    {userIsAdmin ? (
                         <div className="space-y-2">
-                            <Label htmlFor="role">Rol</Label>
-                            <Select value={data.role || ""} onValueChange={(value: string) => setData("role", value === "__none" ? "" : value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="-- Ninguno --" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="__none">-- Ninguno --</SelectItem>
-                                    {roles.map((r) => (
-                                        <SelectItem key={r} value={r}>
-                                            {r}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+                            <Label>Rol</Label>
+                            <p className="text-sm">Administrador (no puede ser cambiado)</p>
                         </div>
+                    ) : (
+                        allowedRoles.length > 0 && (
+                            <div className="space-y-2">
+                                <Label htmlFor="role">Rol</Label>
+                                <Select value={data.role || ""} onValueChange={(value: string) => setData("role", value === "__none" ? "" : value)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="-- Ninguno --" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="__none">-- Ninguno --</SelectItem>
+                                        {allowedRoles.map((r) => (
+                                            <SelectItem key={r} value={r}>
+                                                {r}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+                            </div>
+                        )
                     )}
 
                     <div className="flex justify-end space-x-2 pt-4">

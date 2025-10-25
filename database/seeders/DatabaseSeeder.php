@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
 
             PermissionSeeder::class,
+            CategorySeeder::class,   // puedes omitirlo si ProductSeeder ya lo invoca
+            ProductSeeder::class,
         ]);
 
         // Crear usuarios con roles

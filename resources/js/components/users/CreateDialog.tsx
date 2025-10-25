@@ -19,16 +19,22 @@ import { toastSuccess } from "../ui/sonner"
 export function CreateDialog({ roles }: { roles?: string[] }) {
     const [open, setOpen] = React.useState(false)
 
-    const { data, setData, post, processing, reset, errors } = useForm({
+    // Solo permitir asignar el rol 'employee'
+    const allowedRoles = (roles ?? []).filter((r) => r === 'employee')
+
+    // Por defecto asignar el rol 'employee'
+    const defaultRole = allowedRoles[0] ?? 'employee'
+
+    const { data, setData, post, processing, reset, errors } = useForm<{ name: string; email: string; password: string; role: string }>({
         name: "",
         email: "",
         password: "",
-        role: "",
+        role: defaultRole,
     })
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        post(route("market.users.store"), {
+        post(route("pharmacy.users.store"), {
             preserveScroll: true,
             onSuccess: () => {
                 reset()
@@ -79,23 +85,25 @@ export function CreateDialog({ roles }: { roles?: string[] }) {
                         {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="role">Rol</Label>
-                        <Select value={data.role || ""} onValueChange={(value: string) => setData("role", value === "__none" ? "" : value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="-- Ninguno --" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="__none">-- Ninguno --</SelectItem>
-                                {roles?.map((r) => (
-                                    <SelectItem key={r} value={r}>
-                                        {r}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-                    </div>
+                    {allowedRoles.length > 0 && (
+                        <div className="space-y-2">
+                            <Label htmlFor="role">Rol</Label>
+                            <Select value={data.role || ""} onValueChange={(value: string) => setData("role", (value === "__none" ? "" : value) as unknown as string)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="-- Ninguno --" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="__none">-- Ninguno --</SelectItem>
+                                    {allowedRoles.map((r) => (
+                                        <SelectItem key={r} value={r}>
+                                            {r}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+                        </div>
+                    )}
 
                     <div className="flex justify-end space-x-2 pt-4">
                         <Button variant="outline" type="button" onClick={() => { setOpen(false); reset(); }}>
