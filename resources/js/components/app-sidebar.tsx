@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { Role, User, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, PackagePlus } from 'lucide-react';
+import { FolderOpen, LayoutGrid, PackagePlus, UserCog } from 'lucide-react';
 import AppLogo from './app-logo';
 
 import {
@@ -31,25 +31,25 @@ import sales from '@/routes/market/sales';
 import purchases from '@/routes/market/purchases';
 import reports from '@/routes/market/reports';
 
-// Definición de los ítems del menú con control de roles
+// Definición de los ítems del menú con control de roles (adaptado para mini market)
 const mainNavItems: NavItem[] = [
     {
-        title: 'Panel de control',
+        title: 'Inicio',
         href: dashboard(),
         icon: LayoutGrid,
         allowedRoles: ['admin', 'employee'],
     },
     {
-        title: 'Categorías',
-        href: categories.index(),
-        icon: Package,
-        allowedRoles: ['admin'],
-    },
-    {
-        title: 'Gestión de Productos',
+        title: 'Productos',
         href: products.index(),
         icon: Package,
         allowedRoles: ['admin', 'employee'],
+    },
+    {
+        title: 'Categorías',
+        href: categories.index(),
+        icon: FolderOpen,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Clientes',
@@ -61,7 +61,7 @@ const mainNavItems: NavItem[] = [
         title: 'Ventas',
         href: sales.index(),
         icon: ShoppingCart,
-        allowedRoles: ['employee', 'admin'],
+        allowedRoles: ['admin', 'employee'],
     },
     {
         title: 'Compras',
@@ -76,9 +76,9 @@ const mainNavItems: NavItem[] = [
         allowedRoles: ['admin'],
     },
     {
-        title: 'Usuarios del Sistema',
+        title: 'Usuarios',
         href: users.index(),
-        icon: Users,
+        icon: UserCog,
         allowedRoles: ['admin'],
     },
 ];
